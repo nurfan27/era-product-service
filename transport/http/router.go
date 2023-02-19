@@ -17,6 +17,7 @@ func Serve(postgresRepo repository.Postgres) {
 
 	// Routes
 	e.POST("/api/v1/products", adapter.AddProduct)
+	e.GET("/api/v1/products", adapter.ListProduct)
 
 	// Start server
 	e.Logger.Fatal(e.Start(":8000"))

@@ -14,15 +14,15 @@ type List struct {
 	repo repository.Postgres
 }
 
-func (c *List) Handle(ctx context.Context, req model.Product) (*model.Product, *errors.UniError) {
-	var result model.Product
+func (c *List) Handle(ctx context.Context, req string) ([]model.Product, *errors.UniError) {
+	var result []model.Product
 
-	result, err := c.repo.AddProduct(req)
+	result, err := c.repo.ListProduct(req)
 	if err != nil {
-		return nil, c.e.ErrProcess("error insert data to table product")
+		return result, c.e.ErrProcess("error insert data to table product")
 	}
 
-	return &result, nil
+	return result, nil
 }
 
 func NewList(repo repository.Postgres) *List {

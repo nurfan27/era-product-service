@@ -8,8 +8,7 @@ import (
 
 // RepositoryPostgres ...
 type RepositoryPostgres struct {
-	conn   *sqlx.DB
-	dbName string
+	conn *sqlx.DB
 }
 
 // NewRepositoryPostgres ...
@@ -40,9 +39,10 @@ func (ps RepositoryPostgres) AddProduct(params model.Product) (model.Product, er
 func (ps RepositoryPostgres) ListProduct(param string) ([]model.Product, error) {
 
 	sqlStatement := "SELECT id, name, price, description, quantity FROM products "
-	var products []model.Product
+	query := sqlStatement + SortQuery[param]
 
-	err := ps.conn.Select(&products, sqlStatement)
+	var products []model.Product
+	err := ps.conn.Select(&products, query)
 	if err != nil {
 		return products, err
 	}

@@ -39,24 +39,34 @@ func (adp *Adapter) AddProduct(c echo.Context) error {
 	return c.JSON(resp.Code, resp)
 }
 
-// func (adp *Adapter) DetailMovie(c echo.Context) error {
-// 	ctx := context.Background()
+func (adp *Adapter) ListProduct(c echo.Context) error {
+	ctx := context.Background()
 
-// 	req := action.DetailRequest{
-// 		ImdbID: c.Param("imdbid"),
-// 	}
+	req := c.QueryParam("sort")
 
-// 	act := action.NewDetail()
-// 	result, _ := act.Handle(ctx, req)
-// 	var resp Response
+	act := action.NewList(adp.db)
+	result, _ := act.Handle(ctx, req)
+	var resp Response
+	var products []map[string]interface{}
 
-// 	data := map[string]interface{}{
-// 		"Movie": result.Movie,
-// 	}
+	for _, v := range result {
+		product := map[string]interface{}{
+			"id":          v.ID,
+			"name":        v.Name,
+			"price":       v.Price,
+			"description": v.Description,
+			"quantity":    v.Quantity,
+		}
+		products = append(products, product)
+	}
 
-// 	resp.SetSuccessResponse(http.StatusOK, data)
-// 	return c.JSON(resp.Code, resp)
-// }
+	data := map[string]interface{}{
+		"products": products,
+	}
+
+	resp.SetSuccessResponse(http.StatusOK, data)
+	return c.JSON(resp.Code, resp)
+}
 
 func NewAdapter(postgresRepo repository.Postgres) *Adapter {
 	return &Adapter{
